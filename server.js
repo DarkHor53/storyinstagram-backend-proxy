@@ -21,36 +21,37 @@ app.get("/proxy", async (req, res) => {
   }
 
   try {
-    // Fetch the remote file using Axios
-    // 1) We specify 'arraybuffer' because we might be fetching binary data (images, PDFs, etc.)
-    // 2) We include a generic "User-Agent" header in case the remote server requires it
     const response = await axios.get(fileUrl, {
-      responseType: "arraybuffer",
+      responseType: "arraybuffer", // Keep this for binary data support
       headers: {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1"
+        "User-Agent": "Mozilla/5.0", // Some sites require this header
+        "Referer": "https://iqsaved.com/"
       }
     });
 
-    // Copy the Content-Type header from the remote server, so the file type is recognized correctly
     res.set("Content-Type", response.headers["content-type"]);
     res.send(response.data);
 
   } catch (error) {
-    // Log a basic error message
     console.error("Error fetching file:", error.message);
 
-    // If the remote server responded with an error, log the details
     if (error.response) {
       console.error("Status:", error.response.status);
-      console.error("Response data:", error.response.data);
+      
+      // Convert response data to a readable format
+      let responseData;
+      try {
+        responseData = error.response.data.toString("utf8"); // Convert buffer to string
+      } catch (conversionError) {
+        responseData = "[Failed to decode response]";
+      }
+
+      console.error("Response data:", responseData);
+      res.status(error.response.status).send(responseData || "Unknown error from remote site.");
+    } else {
+      console.error("No response received.");
+      res.status(500).send("No response received from the remote server.");
     }
-
-    // Return the remote server's status code or fallback to 500
-    const statusCode = error.response?.status || 500;
-    // Return the remote server's error data or a generic message
-    const errorData = error.response?.data || "Failed to fetch the file";
-
-    res.status(statusCode).send(errorData);
   }
 });
 
