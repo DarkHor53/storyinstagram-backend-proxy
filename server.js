@@ -7,17 +7,12 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 
-// Convert the cookie JSON array into a properly formatted cookie string
+// Convert cookies into a properly formatted cookie string
 const cookies = [
     { name: "_ym_d", value: "1741073059" },
     { name: "_ym_uid", value: "1741073059932255975" },
     { name: "_ym_isad", value: "1" }
 ].map(cookie => `${cookie.name}=${cookie.value}`).join("; ");
-
-// Health check route
-app.get("/", (req, res) => {
-    res.send("Proxy Server is up and running!");
-});
 
 // Proxy route
 app.get("/proxy", async (req, res) => {
@@ -28,16 +23,24 @@ app.get("/proxy", async (req, res) => {
 
     try {
         const response = await axios.get(fileUrl, {
-            responseType: "arraybuffer", // Ensure binary data support for images
+            responseType: "arraybuffer", // Ensures binary data support
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                "Referer": "https://iqsaved.com/",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                "Referer": "https://iqsaved.com/", // The site that works
+                "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+                "Accept-Encoding": "gzip, deflate, br",
                 "Accept-Language": "en-US,en;q=0.9",
-                "Cookie": cookies // Add cookies as a header
+                "Sec-Ch-Ua": `"Not A(Brand";v="99", "Google Chrome";v="113", "Chromium";v="113"`,
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": `"Windows"`,
+                "Sec-Fetch-Dest": "image",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Cookie": cookies // Use the working cookies
             }
         });
 
+        // Pass the correct content type to the frontend
         res.set("Content-Type", response.headers["content-type"]);
         res.send(response.data);
 
