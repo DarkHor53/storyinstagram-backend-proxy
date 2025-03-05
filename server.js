@@ -7,12 +7,14 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 
-// Convert cookies into a properly formatted cookie string
+// Convert the cookie list into a properly formatted string
 const cookies = [
-    { name: "_ym_d", value: "1741073059" },
-    { name: "_ym_uid", value: "1741073059932255975" },
-    { name: "_ym_isad", value: "1" }
-].map(cookie => `${cookie.name}=${cookie.value}`).join("; ");
+    "_ga=GA1.1.1940857685.1741073059",
+    "_ym_uid=1741073059932255975",
+    "_ym_d=1741073059",
+    "_ym_isad=1",
+    "_ga_RWNEPS7JVV=GS1.1.1741171258.4.1.1741171747.0.0.0"
+].join("; ");
 
 // Proxy route
 app.get("/proxy", async (req, res) => {
@@ -23,20 +25,24 @@ app.get("/proxy", async (req, res) => {
 
     try {
         const response = await axios.get(fileUrl, {
-            responseType: "arraybuffer", // Ensures binary data support
+            responseType: "arraybuffer", // Ensures binary data support for images
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                "Referer": "https://iqsaved.com/", // The site that works
-                "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Sec-Ch-Ua": `"Not A(Brand";v="99", "Google Chrome";v="113", "Chromium";v="113"`,
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7,ru;q=0.6",
+                "Cache-Control": "max-age=0",
+                "If-Modified-Since": "Mon, 10 Feb 2025 20:24:41 GMT",
+                "Priority": "u=0, i",
+                "Sec-Ch-Ua": `"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"`,
                 "Sec-Ch-Ua-Mobile": "?0",
                 "Sec-Ch-Ua-Platform": `"Windows"`,
-                "Sec-Fetch-Dest": "image",
+                "Sec-Fetch-Dest": "document",
                 "Sec-Fetch-Mode": "navigate",
                 "Sec-Fetch-Site": "none",
-                "Cookie": cookies // Use the working cookies
+                "Sec-Fetch-User": "?1",
+                "Upgrade-Insecure-Requests": "1",
+                "Referer": "https://iqsaved.com/",
+                "Cookie": cookies // Authenticated session cookies
             }
         });
 
