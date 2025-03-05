@@ -24,8 +24,8 @@ app.get("/proxy", async (req, res) => {
     const response = await axios.get(fileUrl, {
       responseType: "arraybuffer", // Keep this for binary data support
       headers: {
-        "User-Agent": "Mozilla/5.0", // Some sites require this header
-        "Referer": "https://iqsaved.com/"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; rv:110.0) Gecko/20100101 Firefox/110.0", // Some sites require this header
+        "Referer": "https://insta-stories-viewer.com/"
       }
     });
 
